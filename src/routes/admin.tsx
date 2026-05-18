@@ -127,7 +127,7 @@ function AdminPage() {
                   {!a.is_active && <span className="rounded-full bg-destructive/10 px-2 text-xs text-destructive">معطل</span>}
                 </div>
                 <div className="text-xs text-muted-foreground">
-                  {Number(a.price).toLocaleString("ar-MR")} MRU · {a.city?.name} · {a.category?.name}
+                  {Number(a.price).toLocaleString("en-US")} MRU · {a.city?.name} · {a.category?.name}
                 </div>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -163,7 +163,7 @@ function AdminPage() {
               <div className="flex-1 min-w-0">
                 <div className="truncate font-semibold">{p.ad?.title || p.ad_id}</div>
                 <div className="mt-1 text-sm text-muted-foreground">
-                  {Number(p.amount).toLocaleString("ar-MR")} MRU · {p.method} ·{" "}
+                  {Number(p.amount).toLocaleString("en-US")} MRU · {p.method} ·{" "}
                   <span className={
                     p.status === "approved" ? "text-success" : p.status === "rejected" ? "text-destructive" : "text-warning"
                   }>
