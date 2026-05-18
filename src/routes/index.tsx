@@ -5,18 +5,20 @@ import { AdCard, type Ad } from "@/components/AdCard";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, Search, SlidersHorizontal } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "المرصة - إعلانات موريتانيا (بيع، كراء، خدمات)" },
-      { name: "description", content: "تصفح آلاف الإعلانات في موريتانيا. سيارات، عقارات، هواتف، خدمات وأكثر." },
+      { title: "Elmersa / المرصة" },
+      { name: "description", content: "Annonces Mauritanie - إعلانات موريتانيا" },
     ],
   }),
   component: HomePage,
 });
 
 function HomePage() {
+  const { t } = useI18n();
   const [ads, setAds] = useState<Ad[]>([]);
   const [cities, setCities] = useState<{ id: string; name: string }[]>([]);
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
@@ -62,33 +64,37 @@ function HomePage() {
   return (
     <div className="container mx-auto px-4 py-6">
       <section className="mb-6 overflow-hidden rounded-2xl bg-[var(--gradient-primary)] p-6 text-primary-foreground shadow-[var(--shadow-elevated)] sm:p-10">
-        <h1 className="text-2xl font-extrabold sm:text-4xl">منصة المرصة</h1>
-        <p className="mt-2 max-w-2xl text-sm opacity-90 sm:text-base">
-          أكبر منصة إعلانات في موريتانيا: بيع، كراء، خدمات. انشر إعلانك مجانًا الآن.
-        </p>
+        <h1 className="text-2xl font-extrabold sm:text-4xl">{t("heroTitle")}</h1>
+        <p className="mt-2 max-w-2xl text-sm opacity-90 sm:text-base">{t("heroSubtitle")}</p>
+        <div className="relative mt-5 max-w-2xl">
+          <Search className="absolute start-3 top-1/2 size-5 -translate-y-1/2 text-primary" />
+          <Input
+            placeholder={t("searchPlaceholder")}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="h-12 ps-10 text-base text-foreground shadow-lg"
+          />
+        </div>
       </section>
 
-      <div className="mb-4 grid gap-2 rounded-xl border bg-card p-3 shadow-sm sm:grid-cols-2 lg:grid-cols-6">
-        <div className="relative lg:col-span-2">
-          <Search className="absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input placeholder="ابحث عن إعلان..." value={search} onChange={(e) => setSearch(e.target.value)} className="pr-9" />
-        </div>
+      <div className="mb-4 grid gap-2 rounded-xl border bg-card p-3 shadow-sm sm:grid-cols-2 lg:grid-cols-5">
         <Select value={cityId} onValueChange={setCityId}>
-          <SelectTrigger><SelectValue placeholder="المدينة" /></SelectTrigger>
+          <SelectTrigger><SelectValue placeholder={t("city")} /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">كل المدن</SelectItem>
+            <SelectItem value="all">{t("allCities")}</SelectItem>
             {cities.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
           </SelectContent>
         </Select>
         <Select value={categoryId} onValueChange={setCategoryId}>
-          <SelectTrigger><SelectValue placeholder="الفئة" /></SelectTrigger>
+          <SelectTrigger><SelectValue placeholder={t("category")} /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">كل الفئات</SelectItem>
+            <SelectItem value="all">{t("allCategories")}</SelectItem>
             {categories.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
           </SelectContent>
         </Select>
-        <Input type="number" placeholder="السعر من" value={minPrice} onChange={(e) => setMinPrice(e.target.value)} />
-        <Input type="number" placeholder="إلى" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} />
+        <Input type="number" placeholder={t("priceFrom")} value={minPrice} onChange={(e) => setMinPrice(e.target.value)} />
+        <Input type="number" placeholder={t("priceTo")} value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} />
+        <Input placeholder={t("searchPlaceholder")} value={search} onChange={(e) => setSearch(e.target.value)} />
       </div>
 
       {loading ? (
@@ -96,7 +102,7 @@ function HomePage() {
       ) : filtered.length === 0 ? (
         <div className="rounded-xl border bg-card p-10 text-center text-muted-foreground">
           <SlidersHorizontal className="mx-auto mb-3 size-8" />
-          لا توجد إعلانات مطابقة.
+          {t("noResults")}
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
