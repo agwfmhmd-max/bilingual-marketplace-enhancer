@@ -237,7 +237,7 @@ function PostAdPage() {
         </div>
 
         <Button type="submit" className="w-full" disabled={submitting} size="lg">
-          {submitting && <Loader2 className="size-4 animate-spin" />} نشر الإعلان
+          {submitting && <Loader2 className="size-4 animate-spin" />} {t("publish")}
         </Button>
       </form>
     </div>
