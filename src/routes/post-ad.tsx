@@ -103,9 +103,9 @@ function PostAdPage() {
     if (!cityId) { toast.error("اختر المدينة"); return; }
     if (!categoryId) { toast.error("اختر الفئة"); return; }
     if (files.length === 0) { toast.error("أضف صورة واحدة على الأقل"); return; }
-    if (settings && !settings.free_post_enabled) {
-      toast.error("النشر المجاني معطل حاليًا. يرجى الترقية إلى PRO.");
-      return;
+    if (freeDisabled) {
+      if (!payMethod) { toast.error(t("paymentMethod")); return; }
+      if (!proofFile) { toast.error(t("paymentProof")); return; }
     }
 
     setSubmitting(true);
@@ -132,6 +132,24 @@ function PostAdPage() {
       }).select("id").single();
       if (error) throw error;
       ownership.add(ad.id);
+
+      // If free posting is disabled, also create a payment record for this ad
+      if (freeDisabled && settings && proofFile) {
+        const ext = proofFile.name.split(".").pop() || "jpg";
+        const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+        const { error: upErr } = await supabase.storage.from("payment-proofs").upload(path, proofFile);
+        if (upErr) throw upErr;
+        const { data: signed } = await supabase.storage.from("payment-proofs").createSignedUrl(path, 60 * 60 * 24 * 365);
+        const proofUrl = signed?.signedUrl || path;
+        await supabase.from("payments").insert({
+          ad_id: ad.id,
+          amount: settings.pro_price,
+          method: payMethod,
+          proof_url: proofUrl,
+          notes: payNotes || null,
+        });
+      }
+
       toast.success(t("publish"));
       navigate({ to: "/ad/$adId", params: { adId: ad.id } });
     } catch (err: any) {
