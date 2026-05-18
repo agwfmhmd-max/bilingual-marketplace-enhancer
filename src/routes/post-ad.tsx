@@ -51,7 +51,7 @@ function PostAdPage() {
   useEffect(() => {
     supabase.from("cities").select("id,name").order("name").then(({ data }) => setCities(data || []));
     supabase.from("categories").select("id,name").order("name").then(({ data }) => setCategories(data || []));
-    supabase.from("settings").select("pro_price,free_post_enabled").eq("id", 1).single().then(({ data }) => setSettings(data));
+    supabase.from("settings").select("pro_price,free_post_enabled,payment_phone").eq("id", 1).single().then(({ data }) => setSettings(data));
   }, []);
 
   const addCity = async () => {
