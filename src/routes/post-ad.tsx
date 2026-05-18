@@ -215,7 +215,7 @@ function PostAdPage() {
           <Label>الصور * (حد أقصى 8)</Label>
           <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed bg-muted/30 p-6 text-sm text-muted-foreground hover:bg-muted/50">
             <Upload className="size-6" />
-            اضغط لاختيار الصور
+            {t("uploadImages")}
             <input type="file" multiple accept="image/*" onChange={onFiles} className="hidden" />
           </label>
           {files.length > 0 && (
