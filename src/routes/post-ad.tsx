@@ -269,8 +269,67 @@ function PostAdPage() {
           )}
         </div>
 
+        {freeDisabled && settings && (
+          <div className="space-y-4 rounded-xl border-2 border-warning bg-warning/5 p-4">
+            <div className="text-center">
+              <div className="font-bold text-warning">{t("freeDisabledTitle")}</div>
+              <p className="mt-1 text-xs text-muted-foreground">{t("freeDisabledDesc")}</p>
+            </div>
+            <div className="rounded-lg bg-warning/15 p-3 text-center">
+              <div className="text-xs text-muted-foreground">{t("amountDue")}</div>
+              <div className="text-3xl font-extrabold text-warning" dir="ltr">
+                {fmtNumber(settings.pro_price)} <span className="text-base text-muted-foreground">MRU</span>
+              </div>
+            </div>
+            <div className="rounded-lg bg-secondary p-3">
+              <div className="mb-2 text-xs font-semibold">{t("paymentMethods")}</div>
+              <div className="mb-3 flex flex-wrap gap-2">
+                {PAYMENT_METHODS.map((m) => (
+                  <span key={m} className="rounded-full bg-accent px-3 py-1 text-xs text-accent-foreground">{m}</span>
+                ))}
+              </div>
+              <div className="flex items-center justify-between rounded-md bg-background p-2">
+                <div>
+                  <div className="text-[10px] text-muted-foreground">{t("sendAmountTo")}</div>
+                  <div className="text-lg font-extrabold" dir="ltr">{settings.payment_phone}</div>
+                </div>
+                <Button type="button" variant="outline" size="sm" onClick={copyPhone}><Copy className="size-4" /> {t("copy")}</Button>
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <Label>{t("paymentMethod")}</Label>
+              <Select value={payMethod} onValueChange={setPayMethod}>
+                <SelectTrigger><SelectValue placeholder={t("paymentMethod")} /></SelectTrigger>
+                <SelectContent>
+                  {PAYMENT_METHODS.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label>{t("paymentProof")}</Label>
+              <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed bg-muted/30 p-4 text-sm text-muted-foreground hover:bg-muted/50">
+                <Upload className="size-5" />
+                {t("uploadImages")}
+                <input type="file" accept="image/*" onChange={(e) => setProofFile(e.target.files?.[0] || null)} className="hidden" />
+              </label>
+              {proofFile && (
+                <div className="relative mt-2 inline-block">
+                  <img src={URL.createObjectURL(proofFile)} alt="" className="h-32 rounded-md border" />
+                  <button type="button" onClick={() => setProofFile(null)} className="absolute -right-2 -top-2 rounded-full bg-destructive p-1 text-destructive-foreground">
+                    <X className="size-3" />
+                  </button>
+                </div>
+              )}
+            </div>
+            <div className="space-y-1.5">
+              <Label>{t("notes")}</Label>
+              <Input value={payNotes} onChange={(e) => setPayNotes(e.target.value)} />
+            </div>
+          </div>
+        )}
+
         <Button type="submit" className="w-full" disabled={submitting} size="lg">
-          {submitting && <Loader2 className="size-4 animate-spin" />} {t("publish")}
+          {submitting && <Loader2 className="size-4 animate-spin" />} {freeDisabled ? t("payAndPublish") : t("publish")}
         </Button>
       </form>
     </div>
