@@ -70,6 +70,10 @@ export const T: Dict = {
   paymentProof: { ar: "صورة إثبات الدفع *", fr: "Image de la preuve *" },
   notes: { ar: "ملاحظات", fr: "Notes" },
   send: { ar: "إرسال", fr: "Envoyer" },
+  noAdsToUpgrade: { ar: "ليس لديك إعلانات قابلة للترقية", fr: "Vous n'avez pas d'annonces à mettre en vedette" },
+  freeDisabledTitle: { ar: "النشر المجاني معطل حاليًا", fr: "La publication gratuite est désactivée" },
+  freeDisabledDesc: { ar: "لإتمام نشر هذا الإعلان يجب دفع المبلغ التالي وإرفاق إثبات الدفع", fr: "Pour publier cette annonce, veuillez payer le montant suivant et joindre la preuve" },
+  payAndPublish: { ar: "ادفع وانشر الإعلان", fr: "Payer et publier" },
 };
 
 interface I18nCtx {
