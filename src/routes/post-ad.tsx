@@ -48,7 +48,18 @@ function PostAdPage() {
   const [addingCity, setAddingCity] = useState(false);
   const [addingCat, setAddingCat] = useState(false);
 
-  useEffect(() => {
+  // Inline payment (shown when free posting is disabled)
+  const [payMethod, setPayMethod] = useState("");
+  const [proofFile, setProofFile] = useState<File | null>(null);
+  const [payNotes, setPayNotes] = useState("");
+
+  const freeDisabled = !!settings && !settings.free_post_enabled;
+
+  const copyPhone = () => {
+    if (!settings) return;
+    navigator.clipboard.writeText(settings.payment_phone);
+    toast.success(t("copy"));
+  };
     supabase.from("cities").select("id,name").order("name").then(({ data }) => setCities(data || []));
     supabase.from("categories").select("id,name").order("name").then(({ data }) => setCategories(data || []));
     supabase.from("settings").select("pro_price,free_post_enabled,payment_phone").eq("id", 1).single().then(({ data }) => setSettings(data));
