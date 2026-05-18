@@ -27,6 +27,7 @@ const schema = z.object({
 
 function PostAdPage() {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const [cities, setCities] = useState<{ id: string; name: string }[]>([]);
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
   const [settings, setSettings] = useState<{ pro_price: number; free_post_enabled: boolean } | null>(null);
