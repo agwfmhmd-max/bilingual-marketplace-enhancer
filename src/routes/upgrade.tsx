@@ -136,14 +136,17 @@ function UpgradePage() {
         <h2 className="text-lg font-bold">{t("sendProof")}</h2>
         <div className="space-y-1.5">
           <Label>{t("adToUpgrade")}</Label>
-          <Select value={adId} onValueChange={setAdId}>
-            <SelectTrigger><SelectValue placeholder={t("chooseAd")} /></SelectTrigger>
-            <SelectContent>
-              {ads.map((a) => <SelectItem key={a.id} value={a.id}>{a.title}</SelectItem>)}
-            </SelectContent>
-          </Select>
-          {!isAdmin && ads.length === 0 && (
-            <p className="text-xs text-muted-foreground">{t("chooseAd")}</p>
+          {!isAdmin && ads.length === 0 ? (
+            <div className="rounded-lg border-2 border-dashed bg-muted/30 p-4 text-center text-sm text-muted-foreground">
+              {t("noAdsToUpgrade")}
+            </div>
+          ) : (
+            <Select value={adId} onValueChange={setAdId}>
+              <SelectTrigger><SelectValue placeholder={t("chooseAd")} /></SelectTrigger>
+              <SelectContent>
+                {ads.map((a) => <SelectItem key={a.id} value={a.id}>{a.title}</SelectItem>)}
+              </SelectContent>
+            </Select>
           )}
         </div>
         <div className="space-y-1.5">
