@@ -29,10 +29,10 @@ const schema = z.object({
 
 function PostAdPage() {
   const navigate = useNavigate();
-  const { t } = useI18n();
+  const { t, fmtNumber } = useI18n();
   const [cities, setCities] = useState<{ id: string; name: string }[]>([]);
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
-  const [settings, setSettings] = useState<{ pro_price: number; free_post_enabled: boolean } | null>(null);
+  const [settings, setSettings] = useState<{ pro_price: number; free_post_enabled: boolean; payment_phone: string } | null>(null);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
