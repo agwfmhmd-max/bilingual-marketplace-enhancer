@@ -116,7 +116,8 @@ function PostAdPage() {
         images: urls,
       }).select("id").single();
       if (error) throw error;
-      toast.success("تم نشر إعلانك بنجاح");
+      ownership.add(ad.id);
+      toast.success(t("publish"));
       navigate({ to: "/ad/$adId", params: { adId: ad.id } });
     } catch (err: any) {
       console.error(err);
