@@ -7,9 +7,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Loader2, Plus, Upload, X, Crown } from "lucide-react";
+import { Loader2, Plus, Upload, X, Crown, Copy } from "lucide-react";
 import { z } from "zod";
 import { useI18n, ownership } from "@/lib/i18n";
+
+const PAYMENT_METHODS = ["بنكيلي", "السداد مصرفي", "كليك", "رصيدي", "أمانتي"];
 
 export const Route = createFileRoute("/post-ad")({
   head: () => ({
