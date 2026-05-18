@@ -9,10 +9,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { Loader2, Plus, Upload, X, Crown } from "lucide-react";
 import { z } from "zod";
+import { useI18n, ownership } from "@/lib/i18n";
 
 export const Route = createFileRoute("/post-ad")({
   head: () => ({
-    meta: [{ title: "نشر إعلان جديد - المرصة" }, { name: "description", content: "انشر إعلانك مجانًا في منصة المرصة." }],
+    meta: [{ title: "Add ad or product - Elmersa" }, { name: "description", content: "Publish your ad for free on Elmersa." }],
   }),
   component: PostAdPage,
 });
