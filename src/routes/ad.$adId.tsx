@@ -42,7 +42,7 @@ function AdDetailPage() {
   const isOwner = ownership.owns(ad.id);
   const canUpgrade = (isOwner || isAdmin) && !ad.is_featured;
   const waLink = `https://wa.me/${ad.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(
-    (lang === "ar" ? "السلام عليكم، بخصوص إعلانك: " : "Bonjour, à propos de votre annonce : ") + ad.title
+    t("waGreeting") + ad.title
   )}`;
 
   return (
