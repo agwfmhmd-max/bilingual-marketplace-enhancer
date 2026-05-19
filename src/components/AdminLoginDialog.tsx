@@ -6,8 +6,10 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Loader2, ShieldCheck } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 export function AdminLoginDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
+  const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -15,10 +17,8 @@ export function AdminLoginDialog({ open, onOpenChange }: { open: boolean; onOpen
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // Try sign in
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
-      // If user does not exist, try signing them up (will get admin role via trigger if email matches)
       if (error.message.toLowerCase().includes("invalid")) {
         const { error: signUpErr } = await supabase.auth.signUp({
           email,
@@ -26,35 +26,33 @@ export function AdminLoginDialog({ open, onOpenChange }: { open: boolean; onOpen
           options: { emailRedirectTo: window.location.origin },
         });
         if (signUpErr) {
-          toast.error("بيانات غير صحيحة");
+          toast.error(t("errInvalid"));
           setLoading(false);
           return;
         }
-        // try sign-in again after sign up
         const { error: e2 } = await supabase.auth.signInWithPassword({ email, password });
         if (e2) {
-          toast.error("بيانات غير صحيحة");
+          toast.error(t("errInvalid"));
           setLoading(false);
           return;
         }
       } else {
-        toast.error("بيانات غير صحيحة");
+        toast.error(t("errInvalid"));
         setLoading(false);
         return;
       }
     }
-    // verify admin role
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
       const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", user.id);
       if (!roles?.some((r) => r.role === "admin")) {
         await supabase.auth.signOut();
-        toast.error("هذا الحساب لا يملك صلاحيات المشرف");
+        toast.error(t("errNotAdmin"));
         setLoading(false);
         return;
       }
     }
-    toast.success("مرحبًا بك في لوحة المشرف");
+    toast.success(t("okWelcome"));
     onOpenChange(false);
     setLoading(false);
     window.location.href = "/admin";
@@ -65,21 +63,21 @@ export function AdminLoginDialog({ open, onOpenChange }: { open: boolean; onOpen
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <ShieldCheck className="size-5 text-primary" /> دخول المشرف
+            <ShieldCheck className="size-5 text-primary" /> {t("adminLogin")}
           </DialogTitle>
-          <DialogDescription>قم بإدخال بيانات المشرف للوصول إلى لوحة التحكم.</DialogDescription>
+          <DialogDescription>{t("adminLoginDesc")}</DialogDescription>
         </DialogHeader>
         <form onSubmit={submit} className="space-y-3">
           <div className="space-y-1.5">
-            <Label htmlFor="email">البريد الإلكتروني</Label>
+            <Label htmlFor="email">{t("email")}</Label>
             <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} dir="ltr" />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="password">كلمة المرور</Label>
+            <Label htmlFor="password">{t("password")}</Label>
             <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} dir="ltr" />
           </div>
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading && <Loader2 className="size-4 animate-spin" />} دخول
+            {loading && <Loader2 className="size-4 animate-spin" />} {t("login")}
           </Button>
         </form>
       </DialogContent>
