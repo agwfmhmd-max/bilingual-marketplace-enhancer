@@ -21,10 +21,10 @@ export const Route = createFileRoute("/post-ad")({
 });
 
 const schema = z.object({
-  title: z.string().trim().min(3, "العنوان قصير").max(120),
-  description: z.string().trim().min(10, "الوصف قصير").max(2000),
-  price: z.number().min(0, "السعر غير صالح"),
-  whatsapp: z.string().trim().min(6, "رقم غير صالح").max(20),
+  title: z.string().trim().min(3, "errTitleShort").max(120),
+  description: z.string().trim().min(10, "errDescShort").max(2000),
+  price: z.number().min(0, "errPriceInvalid"),
+  whatsapp: z.string().trim().min(6, "errWhatsappInvalid").max(20),
 });
 
 function PostAdPage() {
@@ -71,24 +71,24 @@ function PostAdPage() {
     const name = newCity.trim();
     if (!name) return;
     const { data, error } = await supabase.from("cities").insert({ name }).select("id,name").single();
-    if (error) { toast.error("تعذر إضافة المدينة"); return; }
+    if (error) { toast.error(t("errCityAdd")); return; }
     setCities((p) => [...p, data].sort((a, b) => a.name.localeCompare(b.name)));
     setCityId(data.id);
     setNewCity("");
     setAddingCity(false);
-    toast.success("تمت إضافة المدينة");
+    toast.success(t("okCityAdd"));
   };
 
   const addCat = async () => {
     const name = newCategory.trim();
     if (!name) return;
     const { data, error } = await supabase.from("categories").insert({ name }).select("id,name").single();
-    if (error) { toast.error("تعذر إضافة الفئة"); return; }
+    if (error) { toast.error(t("errCategoryAdd")); return; }
     setCategories((p) => [...p, data].sort((a, b) => a.name.localeCompare(b.name)));
     setCategoryId(data.id);
     setNewCategory("");
     setAddingCat(false);
-    toast.success("تمت إضافة الفئة");
+    toast.success(t("okCategoryAdd"));
   };
 
   const onFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -99,10 +99,10 @@ function PostAdPage() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const parsed = schema.safeParse({ title, description, price: Number(price), whatsapp });
-    if (!parsed.success) { toast.error(parsed.error.issues[0].message); return; }
-    if (!cityId) { toast.error("اختر المدينة"); return; }
-    if (!categoryId) { toast.error("اختر الفئة"); return; }
-    if (files.length === 0) { toast.error("أضف صورة واحدة على الأقل"); return; }
+    if (!parsed.success) { toast.error(t(parsed.error.issues[0].message as any)); return; }
+    if (!cityId) { toast.error(t("errChooseCity")); return; }
+    if (!categoryId) { toast.error(t("errChooseCategory")); return; }
+    if (files.length === 0) { toast.error(t("errAddImage")); return; }
     if (freeDisabled) {
       if (!payMethod) { toast.error(t("paymentMethod")); return; }
       if (!proofFile) { toast.error(t("paymentProof")); return; }
@@ -154,7 +154,7 @@ function PostAdPage() {
       navigate({ to: "/ad/$adId", params: { adId: ad.id } });
     } catch (err: any) {
       console.error(err);
-      toast.error(err.message || "حدث خطأ أثناء النشر");
+      toast.error(err.message || t("errGeneric"));
     } finally {
       setSubmitting(false);
     }
@@ -179,64 +179,64 @@ function PostAdPage() {
 
       <form onSubmit={submit} className="space-y-4 rounded-xl border bg-card p-5 shadow-sm">
         <div className="space-y-1.5">
-          <Label>عنوان الإعلان *</Label>
-          <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="مثال: سيارة تويوتا 2018" />
+          <Label>{t("adTitle")}</Label>
+          <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t("adTitlePh")} />
         </div>
         <div className="space-y-1.5">
-          <Label>الوصف *</Label>
-          <Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={5} placeholder="تفاصيل الإعلان..." />
+          <Label>{t("description")}</Label>
+          <Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={5} placeholder={t("descriptionPh")} />
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <Label>السعر (MRU) *</Label>
+            <Label>{t("price")}</Label>
             <Input type="number" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="0" />
           </div>
           <div className="space-y-1.5">
-            <Label>رقم واتساب *</Label>
-            <Input value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} placeholder="22200000000" dir="ltr" />
+            <Label>{t("whatsapp")}</Label>
+            <Input value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} placeholder={t("whatsappPh")} dir="ltr" />
           </div>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <Label>المدينة *</Label>
+            <Label>{t("city")} *</Label>
             {addingCity ? (
               <div className="flex gap-2">
-                <Input value={newCity} onChange={(e) => setNewCity(e.target.value)} placeholder="اسم المدينة" />
-                <Button type="button" onClick={addCity}>إضافة</Button>
-                <Button type="button" variant="ghost" onClick={() => setAddingCity(false)}>إلغاء</Button>
+                <Input value={newCity} onChange={(e) => setNewCity(e.target.value)} placeholder={t("cityNamePh")} />
+                <Button type="button" onClick={addCity}>{t("add")}</Button>
+                <Button type="button" variant="ghost" onClick={() => setAddingCity(false)}>{t("cancel")}</Button>
               </div>
             ) : (
               <div className="flex gap-2">
                 <Select value={cityId} onValueChange={setCityId}>
-                  <SelectTrigger><SelectValue placeholder="اختر مدينة" /></SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder={t("selectCity")} /></SelectTrigger>
                   <SelectContent>
                     {cities.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
                   </SelectContent>
                 </Select>
-                <Button type="button" variant="outline" size="icon" onClick={() => setAddingCity(true)} aria-label="إضافة مدينة">
+                <Button type="button" variant="outline" size="icon" onClick={() => setAddingCity(true)} aria-label={t("addCity")}>
                   <Plus className="size-4" />
                 </Button>
               </div>
             )}
           </div>
           <div className="space-y-1.5">
-            <Label>الفئة *</Label>
+            <Label>{t("category")} *</Label>
             {addingCat ? (
               <div className="flex gap-2">
-                <Input value={newCategory} onChange={(e) => setNewCategory(e.target.value)} placeholder="اسم الفئة" />
-                <Button type="button" onClick={addCat}>إضافة</Button>
-                <Button type="button" variant="ghost" onClick={() => setAddingCat(false)}>إلغاء</Button>
+                <Input value={newCategory} onChange={(e) => setNewCategory(e.target.value)} placeholder={t("categoryNamePh")} />
+                <Button type="button" onClick={addCat}>{t("add")}</Button>
+                <Button type="button" variant="ghost" onClick={() => setAddingCat(false)}>{t("cancel")}</Button>
               </div>
             ) : (
               <div className="flex gap-2">
                 <Select value={categoryId} onValueChange={setCategoryId}>
-                  <SelectTrigger><SelectValue placeholder="اختر فئة" /></SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder={t("selectCategory")} /></SelectTrigger>
                   <SelectContent>
                     {categories.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
                   </SelectContent>
                 </Select>
-                <Button type="button" variant="outline" size="icon" onClick={() => setAddingCat(true)} aria-label="إضافة فئة">
+                <Button type="button" variant="outline" size="icon" onClick={() => setAddingCat(true)} aria-label={t("addCategory")}>
                   <Plus className="size-4" />
                 </Button>
               </div>
@@ -245,7 +245,7 @@ function PostAdPage() {
         </div>
 
         <div className="space-y-1.5">
-          <Label>الصور * (حد أقصى 8)</Label>
+          <Label>{t("images")}</Label>
           <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed bg-muted/30 p-6 text-sm text-muted-foreground hover:bg-muted/50">
             <Upload className="size-6" />
             {t("uploadImages")}
